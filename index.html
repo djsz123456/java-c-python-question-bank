@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java期末题型上传系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .upload-form {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4ECDC4;
+        }
+
+        .question-type-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .question-type-card {
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .question-type-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .question-type-card.selected {
+            border-color: #4ECDC4;
+            background: #E8F8F5;
+            color: #2E8B57;
+        }
+
+        .question-type-card .icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .question-type-card h3 {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .question-type-card p {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .file-upload-area {
+            border: 3px dashed #ccc;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover,
+        .file-upload-area.drag-over {
+            border-color: #4ECDC4;
+            background: #E8F8F5;
+        }
+
+        .file-upload-area .upload-icon {
+            font-size: 3em;
+            color: #4ECDC4;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-area p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-area .browse-btn {
+            background: #4ECDC4;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+        }
+
+        .file-upload-area .browse-btn:hover {
+            background: #45B7AA;
+        }
+
+        .file-list {
+            margin-top: 20px;
+        }
+
+        .file-item {
+            background: #f8f9fa;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .file-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .file-details h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .file-details p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #4ECDC4;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45B7AA;
+        }
+
+        .btn-danger {
+            background: #FF6B6B;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #FF5252;
+        }
+
+        .preview-area {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e1e1e1;
+        }
+
+        .preview-content {
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e1e1;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message {
+            background: #D4EDDA;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .login-form {
+            padding: 40px;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e1e1e1;
+        }
+
+        .user-role {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .admin-role {
+            background: #FFE4E1;
+            color: #DC143C;
+        }
+
+        .user-role {
+            background: #E8F8F5;
+            color: #2E8B57;
+        }
+
+        .logout-btn {
+            background: #FF6B6B;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .logout-btn:hover {
+            background: #FF5252;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e1e1e1;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .nav-tab.active {
+            background: white;
+            border-bottom: 3px solid #4ECDC4;
+        }
+
+        .uploaded-files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .file-card {
+            background: white;
+            border: 1px solid #e1e1e1;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .file-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .file-card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .file-card-icon {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+
+        .file-card-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .file-card-subtitle {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .file-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e1e1e1;
+        }
+
+        .file-card-date {
+            color: #999;
+            font-size: 0.8em;
+        }
+
+        .file-card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.8em;
+            border-radius: 3px;
+        }
+
+        .btn-download {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-download:hover {
+            background: #218838;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .upload-form {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .question-type-group {
+                grid-template-columns: 1fr;
+            }
+
+            .login-container {
+                margin: 50px auto;
+            }
+
+            .uploaded-files-grid {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loginSection" class="login-container">
+        <div class="login-header">
+            <h1>� 用户登录</h1>
+            <p>请登录以访问Java期末题型系统</p>
+        </div>
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" placeholder="请输入密码" required>
+            </div>
+            <button type="submit" class="submit-btn" style="width: 100%;">
+                🚪 登录
+            </button>
+            <div id="loginError" style="color: red; text-align: center; margin-top: 10px; display: none;">
+                用户名或密码错误
+            </div>
+        </form>
+    </div>
+
+    <div id="mainContainer" class="container" style="display: none;">
+        <div class="user-info">
+            <div>
+                <span>欢迎，<strong id="currentUser"></strong></span>
+                <span id="userRole" class="user-role"></span>
+            </div>
+            <button type="button" class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+
+        <div id="adminSection" class="admin-section">
+            <div class="nav-tabs">
+                <button type="button" class="nav-tab active" onclick="showTab('upload')">
+                    📤 文件上传
+                </button>
+                <button type="button" class="nav-tab" onclick="showTab('manage')">
+                    🗂️ 文件管理
+                </button>
+            </div>
+
+            <div id="uploadTab" class="tab-content">
+                <div class="header">
+                    <h1>�📚 Java期末题型上传系统</h1>
+                    <p>支持简答题、选择题、判断题、编程题等多种题型上传</p>
+                </div>
+
+                <form class="upload-form" id="uploadForm">
+                    <div class="form-group">
+                        <label for="examTitle">考试标题</label>
+                        <input type="text" id="examTitle" name="examTitle" placeholder="请输入考试标题，如：Java程序设计期末考试" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>题型选择（可多选）</label>
+                        <div class="question-type-group">
+                            <div class="question-type-card" data-type="简答题">
+                                <div class="icon">✍️</div>
+                                <h3>简答题</h3>
+                                <p>开放性问答题</p>
+                            </div>
+                            <div class="question-type-card" data-type="选择题">
+                                <div class="icon">🔘</div>
+                                <h3>选择题</h3>
+                                <p>单选或多选题</p>
+                            </div>
+                            <div class="question-type-card" data-type="判断题">
+                                <div class="icon">✅</div>
+                                <h3>判断题</h3>
+                                <p>正确或错误判断</p>
+                            </div>
+                            <div class="question-type-card" data-type="编程题">
+                                <div class="icon">💻</div>
+                                <h3>编程题</h3>
+                                <p>代码编写题目</p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedTypes" name="selectedTypes">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionCount">题目数量</label>
+                        <input type="number" id="questionCount" name="questionCount" placeholder="请输入题目总数" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="examDate">考试日期</label>
+                        <input type="date" id="examDate" name="examDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>文件上传</label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <div class="upload-icon">📁</div>
+                            <p>拖拽文件到此处或点击上传</p>
+                            <p style="font-size: 0.9em; color: #999;">支持 .doc, .docx, .pdf, .txt, .java 等格式</p>
+                            <button type="button" class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                                选择文件
+                            </button>
+                            <input type="file" id="fileInput" name="files" multiple style="display: none;" accept=".doc,.docx,.pdf,.txt,.java,.py">
+                        </div>
+                        <div class="file-list" id="fileList"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">题目描述</label>
+                        <textarea id="description" name="description" rows="4" placeholder="请描述考试的具体要求、注意事项等..."></textarea>
+                    </div>
+
+                    <div class="submit-section">
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            📤 提交上传
+                        </button>
+                    </div>
+
+                    <div class="success-message" id="successMessage">
+                        🎉 文件上传成功！您的Java期末题型已成功提交。
+                    </div>
+                </form>
+            </div>
+
+            <div id="manageTab" class="tab-content" style="display: none;">
+                <div class="header">
+                    <h1>🗂️ 文件管理中心</h1>
+                    <p>管理已上传的Java期末题型文件</p>
+                </div>
+
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 20px;">
+                        <input type="text" id="searchInput" placeholder="搜索文件名或考试标题..." 
+                               style="width: 300px; padding: 10px; border: 2px solid #e1e1e1; border-radius: 5px;">
+                        <button type="button" class="btn btn-primary" onclick="searchFiles()">🔍 搜索</button>
+                    </div>
+
+                    <div class="uploaded-files-grid" id="uploadedFilesGrid">
+                        <div style="grid-column: 1/-1; text-align: center; color: #999; padding: 40px;">
+                            暂无上传的文件
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="viewSection" class="view-section">
+            <div class="nav-tabs">
+                <button type="button" class="nav-tab active">
+                    📁 文件浏览
+                </button>
+            </div>
+
+            <div class="tab-content">
+                <div class="header">
+                    <h1>📚 Java期末题型文件库</h1>
+                    <p>浏览和下载已上传的Java期末题型文件</p>
+                </div>
+
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 20px;">
+                        <input type="text" id="viewSearchInput" placeholder="搜索文件名或考试标题..." 
+                               style="width: 300px; padding: 10px; border: 2px solid #e1e1e1; border-radius: 5px;">
+                        <button type="button" class="btn btn-primary" onclick="searchViewFiles()">🔍 搜索</button>
+                    </div>
+
+                    <div class="uploaded-files-grid" id="viewFilesGrid">
+                        <div style="grid-column: 1/-1; text-align: center; color: #999; padding: 40px;">
+                            暂无可用的文件
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentUser = null;
+        let uploadedFiles = [];
+        let allUploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
+
+        // 页面加载时检查登录状态
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showMainInterface();
+            }
+        });
+
+        // 登录功能
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginError = document.getElementById('loginError');
+
+            if (username === 'admin' && password === 'admin123456') {
+                currentUser = {
+                    username: username,
+                    role: 'admin',
+                    loginTime: new Date().toLocaleString()
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showMainInterface();
+            } else {
+                loginError.style.display = 'block';
+                setTimeout(() => {
+                    loginError.style.display = 'none';
+                }, 3000);
+            }
+        });
+
+        // 显示主界面
+        function showMainInterface() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'block';
+            
+            document.getElementById('currentUser').textContent = currentUser.username;
+            const userRoleSpan = document.getElementById('userRole');
+            
+            if (currentUser.role === 'admin') {
+                userRoleSpan.textContent = '管理员';
+                userRoleSpan.className = 'user-role admin-role';
+                document.getElementById('adminSection').style.display = 'block';
+                document.getElementById('viewSection').style.display = 'none';
+                loadAdminFiles();
+            } else {
+                userRoleSpan.textContent = '普通用户';
+                userRoleSpan.className = 'user-role user-role';
+                document.getElementById('adminSection').style.display = 'none';
+                document.getElementById('viewSection').style.display = 'block';
+                loadViewFiles();
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+
+        // Tab切换
+        function showTab(tabName) {
+            // 隐藏所有tab内容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // 移除所有tab的active状态
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 显示选中的tab
+            if (tabName === 'upload') {
+                document.getElementById('uploadTab').style.display = 'block';
+                document.querySelector('.nav-tab[onclick="showTab(\'upload\')"]').classList.add('active');
+            } else if (tabName === 'manage') {
+                document.getElementById('manageTab').style.display = 'block';
+                document.querySelector('.nav-tab[onclick="showTab(\'manage\')"]').classList.add('active');
+                loadAdminFiles();
+            }
+        }
+
+        // 题型选择功能
+        const questionTypeCards = document.querySelectorAll('.question-type-card');
+        const selectedTypes = new Set();
+
+        questionTypeCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const type = this.dataset.type;
+                if (this.classList.contains('selected')) {
+                    this.classList.remove('selected');
+                    selectedTypes.delete(type);
+                } else {
+                    this.classList.add('selected');
+                    selectedTypes.add(type);
+                }
+                updateSelectedTypes();
+            });
+        });
+
+        function updateSelectedTypes() {
+            document.getElementById('selectedTypes').value = Array.from(selectedTypes).join(',');
+        }
+
+        // 文件上传功能
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+
+        fileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        });
+
+        fileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+        });
+
+        fileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            files.forEach(file => {
+                if (!uploadedFiles.find(f => f.name === file.name && f.size === file.size)) {
+                    uploadedFiles.push(file);
+                    addFileToList(file);
+                }
+            });
+        }
+
+        function addFileToList(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileIcon = getFileIcon(file.name);
+            const fileSize = formatFileSize(file.size);
+            
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <div class="file-icon">${fileIcon}</div>
+                    <div class="file-details">
+                        <h4>${file.name}</h4>
+                        <p>${fileSize} • ${new Date(file.lastModified).toLocaleDateString()}</p>
+                    </div>
+                </div>
+                <div class="file-actions">
+                    <button type="button" class="btn btn-primary" onclick="previewFile('${file.name}')">预览</button>
+                    <button type="button" class="btn btn-danger" onclick="removeFile('${file.name}')">删除</button>
+                </div>
+            `;
+            
+            fileList.appendChild(fileItem);
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = {
+                'pdf': '📄',
+                'doc': '📝',
+                'docx': '📝',
+                'txt': '📋',
+                'java': '☕',
+                'py': '🐍'
+            };
+            return icons[ext] || '📎';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function previewFile(filename) {
+            const file = uploadedFiles.find(f => f.name === filename);
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                showPreviewModal(content, filename);
+            };
+            
+            if (file.type.startsWith('text/') || ['java', 'py', 'txt'].some(ext => filename.endsWith(ext))) {
+                reader.readAsText(file);
+            } else {
+                alert('该文件类型暂不支持预览');
+            }
+        }
+
+        function showPreviewModal(content, filename) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    border-radius: 10px;
+                    padding: 30px;
+                    max-width: 80%;
+                    max-height: 80%;
+                    overflow: auto;
+                    position: relative;
+                ">
+                    <button onclick="this.closest('div[style*=fixed]').remove()" style="
+                        position: absolute;
+                        top: 10px;
+                        right: 15px;
+                        background: none;
+                        border: none;
+                        font-size: 20px;
+                        cursor: pointer;
+                    ">×</button>
+                    <h3 style="margin-bottom: 15px;">文件预览: ${filename}</h3>
+                    <div class="preview-content">${content}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function removeFile(filename) {
+            uploadedFiles = uploadedFiles.filter(f => f.name !== filename);
+            const fileItems = fileList.querySelectorAll('.file-item');
+            fileItems.forEach(item => {
+                if (item.querySelector('h4').textContent === filename) {
+                    item.remove();
+                }
+            });
+        }
+
+        // 表单提交
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 表单验证
+            if (!document.getElementById('examTitle').value.trim()) {
+                alert('请输入考试标题');
+                return;
+            }
+            
+            if (selectedTypes.size === 0) {
+                alert('请至少选择一种题型');
+                return;
+            }
+            
+            if (uploadedFiles.length === 0) {
+                alert('请上传至少一个文件');
+                return;
+            }
+
+            // 模拟上传过程
+            const submitBtn = document.getElementById('submitBtn');
+            const successMessage = document.getElementById('successMessage');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ 上传中...';
+            
+            setTimeout(() => {
+                // 保存文件信息到本地存储
+                uploadedFiles.forEach(file => {
+                    const fileInfo = {
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        size: file.size,
+                        type: file.name.split('.').pop().toLowerCase(),
+                        uploadDate: new Date().toISOString(),
+                        examTitle: document.getElementById('examTitle').value,
+                        questionTypes: Array.from(selectedTypes).join(','),
+                        questionCount: document.getElementById('questionCount').value,
+                        examDate: document.getElementById('examDate').value,
+                        description: document.getElementById('description').value,
+                        uploader: currentUser.username
+                    };
+                    allUploadedFiles.push(fileInfo);
+                });
+                
+                localStorage.setItem('uploadedFiles', JSON.stringify(allUploadedFiles));
+                
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📤 提交上传';
+                successMessage.style.display = 'block';
+                
+                // 滚动到成功消息
+                successMessage.scrollIntoView({ behavior: 'smooth' });
+                
+                // 3秒后隐藏成功消息
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+                
+                // 重置表单
+                setTimeout(() => {
+                    this.reset();
+                    selectedTypes.clear();
+                    questionTypeCards.forEach(card => card.classList.remove('selected'));
+                    fileList.innerHTML = '';
+                    uploadedFiles = [];
+                }, 1000);
+                
+                // 刷新文件列表
+                if (document.getElementById('manageTab').style.display !== 'none') {
+                    loadAdminFiles();
+                }
+                if (document.getElementById('viewSection').style.display !== 'none') {
+                    loadViewFiles();
+                }
+            }, 2000);
+        });
+
+        // 设置默认日期为今天
+        document.getElementById('examDate').valueAsDate = new Date();
+
+        // 加载管理员文件列表
+        function loadAdminFiles() {
+            const grid = document.getElementById('uploadedFilesGrid');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filteredFiles = allUploadedFiles;
+            if (searchTerm) {
+                filteredFiles = allUploadedFiles.filter(file => 
+                    file.name.toLowerCase().includes(searchTerm) ||
+                    file.examTitle.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filteredFiles.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #999; padding: 40px;">暂无上传的文件</div>';
+                return;
+            }
+            
+            grid.innerHTML = filteredFiles.map(file => `
+                <div class="file-card">
+                    <div class="file-card-header">
+                        <div class="file-card-icon">${getFileIcon(file.name)}</div>
+                        <div>
+                            <div class="file-card-title">${file.examTitle}</div>
+                            <div class="file-card-subtitle">${file.name}</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <strong>题型:</strong> ${file.questionTypes}<br>
+                        <strong>题目数量:</strong> ${file.questionCount}<br>
+                        <strong>上传者:</strong> ${file.uploader}
+                    </div>
+                    <div class="file-card-meta">
+                        <div class="file-card-date">${new Date(file.uploadDate).toLocaleDateString()}</div>
+                        <div class="file-card-actions">
+                            <button type="button" class="btn btn-primary btn-small" onclick="previewStoredFile(${file.id})">预览</button>
+                            <button type="button" class="btn btn-download btn-small" onclick="downloadFile(${file.id})">下载</button>
+                            <button type="button" class="btn btn-danger btn-small" onclick="deleteFile(${file.id})">删除</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 加载用户浏览文件列表
+        function loadViewFiles() {
+            const grid = document.getElementById('viewFilesGrid');
+            const searchTerm = document.getElementById('viewSearchInput').value.toLowerCase();
+            
+            let filteredFiles = allUploadedFiles;
+            if (searchTerm) {
+                filteredFiles = allUploadedFiles.filter(file => 
+                    file.name.toLowerCase().includes(searchTerm) ||
+                    file.examTitle.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filteredFiles.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #999; padding: 40px;">暂无可用的文件</div>';
+                return;
+            }
+            
+            grid.innerHTML = filteredFiles.map(file => `
+                <div class="file-card">
+                    <div class="file-card-header">
+                        <div class="file-card-icon">${getFileIcon(file.name)}</div>
+                        <div>
+                            <div class="file-card-title">${file.examTitle}</div>
+                            <div class="file-card-subtitle">${file.name}</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <strong>题型:</strong> ${file.questionTypes}<br>
+                        <strong>题目数量:</strong> ${file.questionCount}<br>
+                        <strong>上传者:</strong> ${file.uploader}
+                    </div>
+                    <div class="file-card-meta">
+                        <div class="file-card-date">${new Date(file.uploadDate).toLocaleDateString()}</div>
+                        <div class="file-card-actions">
+                            <button type="button" class="btn btn-primary btn-small" onclick="previewStoredFile(${file.id})">预览</button>
+                            <button type="button" class="btn btn-download btn-small" onclick="downloadFile(${file.id})">下载</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 预览已存储的文件
+        function previewStoredFile(fileId) {
+            const file = allUploadedFiles.find(f => f.id === fileId);
+            if (!file) return;
+            
+            alert(`预览功能需要实际的文件内容。\n文件名: ${file.name}\n考试标题: ${file.examTitle}\n题型: ${file.questionTypes}\n\n在实际应用中，这里会显示文件内容预览。`);
+        }
+
+        // 下载文件
+        function downloadFile(fileId) {
+            const file = allUploadedFiles.find(f => f.id === fileId);
+            if (!file) return;
+            
+            // 模拟下载
+            const link = document.createElement('a');
+            link.href = '#';
+            link.download = file.name;
+            link.style.display = 'none';
+            
+            alert(`开始下载文件: ${file.name}\n\n在实际应用中，这里会触发真实的文件下载。`);
+        }
+
+        // 删除文件
+        function deleteFile(fileId) {
+            if (confirm('确定要删除这个文件吗？')) {
+                allUploadedFiles = allUploadedFiles.filter(f => f.id !== fileId);
+                localStorage.setItem('uploadedFiles', JSON.stringify(allUploadedFiles));
+                loadAdminFiles();
+                loadViewFiles();
+            }
+        }
+
+        // 搜索功能
+        function searchFiles() {
+            loadAdminFiles();
+        }
+
+        function searchViewFiles() {
+            loadViewFiles();
+        }
+
+        // 实时搜索
+        document.getElementById('searchInput').addEventListener('input', function() {
+            loadAdminFiles();
+        });
+
+        document.getElementById('viewSearchInput').addEventListener('input', function() {
+            loadViewFiles();
+        });
+    </script>
+</body>
+</html>
